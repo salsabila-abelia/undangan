@@ -25,6 +25,7 @@ import {
   VolumeX,
   Video,
   Play,
+  Filter,
 } from "lucide-react";
 
 function SmoothDivider({
@@ -90,21 +91,34 @@ export default function ReimaginedGraduation() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isMounted, setIsMounted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-
+  
+  // STATE ALUR ANIMASI (Amplop -> Cinematic -> Web)
+  const [introState, setIntroState] = useState<"envelope" | "cinematic" | "done">("envelope");
+  const [isFlapOpen, setIsFlapOpen] = useState(false);
+  
+  const [showConfetti, setShowConfetti] = useState(false);
   const [showAll, setShowAll] = useState(false);
 
-  // INI DIA: 9 File foto yang berbeda
+  // STATE BARU UNTUK FILTER GALERI
+  const [activeFilter, setActiveFilter] = useState("Semua");
+  const filterCategories = ["Semua", "Momen Moklet", "Prakerin", "Project TKJ"];
+
+  // DAFTAR FOTO DIUBAH JADI OBJECT DENGAN KATEGORI
   const galleryImages = [
-    "/images/foto1.jpg",
-    "/images/foto2.jpg",
-    "/images/foto3.jpg",
-    "/images/foto4.jpg",
-    "/images/foto5.jpg",
-    "/images/foto6.jpg",
-    "/images/foto7.jpg",
-    "/images/foto8.jpg",
-    "/images/foto9.jpg",
+    { src: "/images/foto1.jpg", category: "Momen Moklet" },
+    { src: "/images/foto2.jpg", category: "Project TKJ" },
+    { src: "/images/foto3.jpg", category: "Prakerin" },
+    { src: "/images/foto4.jpg", category: "Momen Moklet" },
+    { src: "/images/foto5.jpg", category: "Project TKJ" },
+    { src: "/images/foto6.jpg", category: "Prakerin" },
+    { src: "/images/foto7.jpg", category: "Momen Moklet" },
+    { src: "/images/foto8.jpg", category: "Project TKJ" },
+    { src: "/images/foto9.jpg", category: "Prakerin" },
   ];
+
+  const filteredGallery = activeFilter === "Semua" 
+    ? galleryImages 
+    : galleryImages.filter(img => img.category === activeFilter);
 
   const [guestName, setGuestName] = useState("Bapak/Ibu/Saudara/i");
 
@@ -129,6 +143,22 @@ export default function ReimaginedGraduation() {
       time: "5 jam yang lalu",
     },
   ]);
+
+  const quoteText = "Bukan sekadar tentang selembar ijazah. Ini adalah bukti perjuangan, tawa, dan air mata yang kita ukir bersama di SMK Telkom Malang. Terbanglah tinggi, karena dunia menanti karya nyata kita.";
+  const quoteWords = quoteText.split(" ");
+  
+  const quoteVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.08 }
+    }
+  };
+
+  const wordVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+  };
 
   useEffect(() => {
     setIsMounted(true);
@@ -163,13 +193,30 @@ export default function ReimaginedGraduation() {
     return () => clearInterval(interval);
   }, []);
 
+  const handleOpenEnvelope = () => {
+    if (isFlapOpen) return;
+    setIsFlapOpen(true);
+
+    if (audioRef.current) {
+      audioRef.current.play().then(() => {
+        setIsPlaying(true);
+      }).catch((error) => console.log("Audio play error:", error));
+    }
+
+    setTimeout(() => {
+      setIntroState("cinematic");
+      setTimeout(() => {
+        setIntroState("done");
+      }, 2800);
+    }, 1200); 
+  };
+
   const { scrollYProgress } = useScroll({
     target: isMounted ? containerRef : undefined,
     offset: ["start start", "end end"],
   });
 
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
-  const flowerRotate = useTransform(scrollYProgress, [0, 1], [0, 45]);
 
   const addToCalendar = () => {
     const event = {
@@ -197,6 +244,9 @@ export default function ReimaginedGraduation() {
       ]);
       setNewName("");
       setNewMessage("");
+
+      setShowConfetti(true);
+      setTimeout(() => setShowConfetti(false), 4500);
     }
   };
 
@@ -205,15 +255,131 @@ export default function ReimaginedGraduation() {
   return (
     <main
       ref={containerRef}
-      // UPDATE: overflow-x-hidden lebih handal untuk Apple/iPad
       className="relative bg-[#FCFAFA] font-serif text-[#1A1A1A] w-full max-w-[100vw] overflow-x-hidden"
     >
+      <AnimatePresence>
+        {introState !== "done" && (
+          <motion.div
+            key="master-overlay"
+            initial={{ opacity: 1 }}
+            exit={{ opacity: 0, y: "-100%" }}
+            transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1] }}
+            className="fixed inset-0 z-[9999] bg-[#1a0505] flex flex-col items-center justify-center overflow-hidden"
+          >
+            <motion.img
+              src="/flower.png"
+              className="absolute -top-20 -left-20 w-72 sm:w-[400px] opacity-15 -rotate-45 mix-blend-screen pointer-events-none"
+              alt=""
+            />
+            <motion.img
+              src="/flower.png"
+              className="absolute -bottom-20 -right-20 w-72 sm:w-[400px] opacity-15 rotate-[135deg] mix-blend-screen pointer-events-none"
+              alt=""
+            />
+
+            <AnimatePresence>
+              {introState === "envelope" && (
+                <motion.div
+                  key="envelope-container"
+                  exit={{ opacity: 0, scale: 1.5, filter: "blur(10px)" }}
+                  transition={{ duration: 0.8, ease: "easeIn" }}
+                  className="relative flex flex-col items-center justify-center cursor-pointer z-10"
+                  onClick={handleOpenEnvelope}
+                >
+                  <div className="text-[#C5A059] font-serif italic mb-8 text-2xl sm:text-3xl tracking-widest text-center opacity-90 drop-shadow-lg">
+                    You're Invited
+                  </div>
+
+                  <div className="relative w-[300px] h-[200px] sm:w-[400px] sm:h-[260px] drop-shadow-2xl transition-transform duration-300 hover:scale-105">
+                    <div className="absolute inset-0 bg-[#E0DDD8] rounded-md shadow-inner" />
+                    <div className="absolute bottom-0 w-0 h-0 border-l-[150px] sm:border-l-[200px] border-r-[150px] sm:border-r-[200px] border-b-[120px] sm:border-b-[160px] border-l-transparent border-r-transparent border-b-[#E8E5E1] z-10 drop-shadow-sm" />
+                    <div className="absolute top-0 left-0 w-0 h-0 border-y-[100px] sm:border-y-[130px] border-l-[150px] sm:border-l-[200px] border-y-transparent border-l-[#F3F1EF] z-10 drop-shadow-md" />
+                    <div className="absolute top-0 right-0 w-0 h-0 border-y-[100px] sm:border-y-[130px] border-r-[150px] sm:border-r-[200px] border-y-transparent border-r-[#F3F1EF] z-10 drop-shadow-md" />
+                    <motion.div
+                      initial={{ rotateX: 0 }}
+                      animate={{ rotateX: isFlapOpen ? 180 : 0 }}
+                      transition={{ duration: 0.6, ease: "easeInOut" }}
+                      style={{ transformOrigin: "top" }}
+                      className="absolute top-0 left-0 w-0 h-0 border-l-[150px] sm:border-l-[200px] border-r-[150px] sm:border-r-[200px] border-t-[120px] sm:border-t-[150px] border-l-transparent border-r-transparent border-t-[#DCD8D3] z-20 drop-shadow-lg"
+                    />
+                    <motion.div
+                      animate={{ opacity: isFlapOpen ? 0 : 1, scale: isFlapOpen ? 0 : 1 }}
+                      transition={{ duration: 0.3 }}
+                      className="absolute top-[110px] sm:top-[140px] left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 sm:w-16 sm:h-16 bg-[#581010] rounded-full z-30 shadow-[0_4px_15px_rgba(0,0,0,0.4)] border-[3px] border-[#430c0c] flex items-center justify-center"
+                    >
+                      <span className="text-[#C5A059] font-serif italic font-bold text-lg">32</span>
+                    </motion.div>
+                  </div>
+
+                  <motion.p
+                    animate={{ opacity: [0.4, 1, 0.4] }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                    className="mt-12 text-[#C5A059] text-xs sm:text-sm uppercase tracking-[0.4em] font-sans font-bold"
+                  >
+                    Click to Open
+                  </motion.p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            <AnimatePresence>
+              {introState === "cinematic" && (
+                <motion.div
+                  key="cinematic-text"
+                  initial={{ scale: 0.8, opacity: 0, filter: "blur(10px)" }}
+                  animate={{ scale: 1, opacity: 1, filter: "blur(0px)" }}
+                  exit={{ scale: 1.2, opacity: 0, filter: "blur(10px)" }}
+                  transition={{ duration: 1.5, ease: "easeOut" }}
+                  className="absolute flex flex-col items-center z-20"
+                >
+                  <h1 
+                    className="text-5xl sm:text-7xl text-[#C5A059] font-serif italic tracking-widest text-center" 
+                    style={{ textShadow: "0 0 30px rgba(197, 160, 89, 0.4)" }}
+                  >
+                    Class 32
+                  </h1>
+                  <motion.div
+                    initial={{ width: 0 }}
+                    animate={{ width: "100%" }}
+                    transition={{ duration: 1.5, delay: 0.6, ease: "easeInOut" }}
+                    className="h-[2px] bg-gradient-to-r from-transparent via-[#C5A059] to-transparent mt-5"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {showConfetti && (
+           <div className="fixed inset-0 pointer-events-none z-[9990] overflow-hidden">
+              {Array.from({ length: 80 }).map((_, i) => {
+                const isGold = Math.random() > 0.5;
+                const isMaroon = Math.random() > 0.8;
+                const left = Math.random() * 100;
+                const duration = 2 + Math.random() * 3;
+                const delay = Math.random() * 0.4;
+                const bgColor = isMaroon ? 'bg-[#581010]' : isGold ? 'bg-[#C5A059]' : 'bg-[#F3D890]';
+                return (
+                  <motion.div
+                    key={i}
+                    initial={{ y: -50, x: left + "vw", rotate: 0, opacity: 1 }}
+                    animate={{ y: "110vh", x: (left + (Math.random() * 30 - 15)) + "vw", rotate: Math.random() * 720, opacity: 0 }}
+                    transition={{ duration, delay, ease: "easeIn" }}
+                    className={`absolute top-0 w-2 h-4 sm:w-3 sm:h-6 rounded-sm ${bgColor} shadow-lg`}
+                  />
+                );
+              })}
+           </div>
+        )}
+      </AnimatePresence>
+
       <motion.div
         style={{ scaleX }}
         className="fixed top-0 left-0 right-0 h-1 bg-[#C5A059] z-[100] origin-left"
       />
 
-      {/* Tombol Play Music (Kanan Bawah) */}
       <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[100]">
         <button
           onClick={() => {
@@ -230,25 +396,19 @@ export default function ReimaginedGraduation() {
             <VolumeX size={20} />
           )}
         </button>
-
         <audio ref={audioRef} src="/tulus.mp3?v=1" loop />
       </div>
 
-      {/* UPDATE LAYOUT HERO: lg:flex-row agar iPad Portrait menumpuk rapi */}
       <section className="relative min-h-screen w-full flex flex-col lg:flex-row items-center justify-center overflow-hidden bg-[#2D0A0A] px-4 sm:px-8 lg:px-0 py-24 lg:py-0">
-        {/* Latar Belakang Bunga (Tanpa Glow, Tanpa Tulisan Moklet) */}
         <div className="absolute inset-0 pointer-events-none flex items-center justify-center overflow-hidden z-0">
-          {/* Bunga Kiri Atas (Menggunakan mix-blend-screen agar background hitamnya hilang) */}
           <motion.img
             initial={{ opacity: 0, scale: 0.8, rotate: -20 }}
             animate={{ opacity: 0.15, scale: 1, rotate: 0 }}
             transition={{ duration: 2, ease: "easeOut" }}
-            src="/flower.png"
+            src="/flower.png" 
             className="absolute -top-10 -left-10 md:-top-20 md:-left-20 w-72 md:w-[450px] lg:w-[500px] mix-blend-screen"
             alt=""
           />
-
-          {/* Bunga Kanan Bawah */}
           <motion.img
             initial={{ opacity: 0, scale: 0.8, rotate: 160 }}
             animate={{ opacity: 0.15, scale: 1, rotate: 180 }}
@@ -274,14 +434,6 @@ export default function ReimaginedGraduation() {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#2D0A0A]/80 via-transparent to-transparent" />
             </div>
-
-            {/* Bunga ornamen di pojok frame */}
-            <motion.img
-              style={{ rotate: flowerRotate }}
-              src="/flower.png"
-              className="absolute -bottom-16 -right-16 sm:-bottom-20 sm:-right-20 w-40 sm:w-56 mix-blend-screen opacity-90"
-              alt=""
-            />
           </motion.div>
         </div>
 
@@ -302,7 +454,6 @@ export default function ReimaginedGraduation() {
               SMK Telkom Malang
             </span>
 
-            {/* UPDATE UKURAN FONT: Memastikan teks responsif dan aman di iPad */}
             <h1 className="text-4xl sm:text-6xl md:text-7xl lg:text-7xl xl:text-8xl font-bold tracking-tighter leading-[1.05] lg:leading-[0.95]">
               WISUDA <br />
               <span className="text-[#C5A059] italic font-light">
@@ -337,7 +488,7 @@ export default function ReimaginedGraduation() {
             className="text-center mb-16"
           >
             <h2 className="text-xl sm:text-2xl md:text-4xl leading-snug">
-              Yth. Orangtua / Wali Murid <br />
+              Yth. {guestName} <br />
               <span className="text-[#C5A059] italic">
                 Kelas XII Angkatan XXXII
               </span>
@@ -670,7 +821,49 @@ export default function ReimaginedGraduation() {
         </div>
       </section>
 
-      <SmoothDivider from="#2D0A0A" to="#FCFAFA" />
+      <SmoothDivider from="#2D0A0A" to="#0a0202" />
+
+      <section className="relative py-24 sm:py-32 px-4 sm:px-6 bg-[#0a0202] text-center flex items-center justify-center min-h-[60vh] overflow-hidden">
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 sm:w-96 sm:h-96 bg-[#C5A059]/10 rounded-full blur-[100px] pointer-events-none" />
+
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
+          variants={quoteVariants}
+          className="max-w-4xl mx-auto relative z-10 px-2"
+        >
+          <h2 className="text-2xl sm:text-4xl md:text-5xl font-serif text-[#C5A059] leading-relaxed sm:leading-relaxed italic">
+            {quoteWords.map((word, i) => (
+              <motion.span
+                key={i}
+                variants={wordVariants}
+                className="inline-block mr-2 sm:mr-3"
+              >
+                {word}
+              </motion.span>
+            ))}
+          </h2>
+          <motion.div
+            variants={{
+              hidden: { opacity: 0, scale: 0 },
+              visible: { opacity: 1, scale: 1, transition: { duration: 1, delay: 1.5 } }
+            }}
+            className="w-24 h-[1px] bg-[#C5A059]/40 mx-auto mt-10 mb-6"
+          />
+          <motion.p
+            variants={{
+              hidden: { opacity: 0 },
+              visible: { opacity: 1, transition: { duration: 1, delay: 2 } }
+            }}
+            className="text-white/40 text-xs sm:text-sm tracking-[0.3em] uppercase font-sans font-bold"
+          >
+            Angkatan 32 • Moklet
+          </motion.p>
+        </motion.div>
+      </section>
+
+      <SmoothDivider from="#0a0202" to="#FCFAFA" />
 
       <section className="py-16 px-4 sm:px-6 bg-[#FCFAFA] w-full overflow-hidden">
         <div className="max-w-5xl mx-auto w-full text-center">
@@ -708,7 +901,7 @@ export default function ReimaginedGraduation() {
       </section>
 
       <section className="py-10 sm:py-16 bg-[#FCFAFA] overflow-hidden w-full">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-12 flex flex-col md:flex-row justify-between items-center md:items-end gap-6 w-full text-center md:text-left">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-6 flex flex-col md:flex-row justify-between items-center md:items-end gap-6 w-full text-center md:text-left">
           <div>
             <h3 className="text-3xl sm:text-4xl italic text-[#333]">
               Galeri Kenangan
@@ -734,8 +927,28 @@ export default function ReimaginedGraduation() {
           </motion.button>
         </div>
 
-        <div className="relative px-4 sm:px-6 w-full">
-          <AnimatePresence mode="wait">
+        {/* SECTION CHIP FILTER BARU */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-10 w-full flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+          <div className="flex items-center gap-2 pr-4 text-gray-400">
+             <Filter size={18} />
+          </div>
+          {filterCategories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setActiveFilter(category)}
+              className={`px-5 py-2.5 rounded-full text-xs font-bold tracking-wider transition-all whitespace-nowrap border ${
+                activeFilter === category
+                  ? "bg-[#C5A059] text-white border-[#C5A059] shadow-md"
+                  : "bg-white text-gray-500 border-gray-200 hover:border-[#C5A059] hover:text-[#C5A059]"
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+
+        <div className="relative px-4 sm:px-6 w-full min-h-[300px]">
+          <AnimatePresence mode="popLayout">
             {!showAll ? (
               <motion.div
                 key="carousel"
@@ -748,33 +961,44 @@ export default function ReimaginedGraduation() {
                   WebkitOverflowScrolling: "touch",
                 }}
               >
-                {galleryImages.map((imgSrc, index) => (
-                  <div
-                    key={index}
-                    className="group relative min-w-[82vw] sm:min-w-[360px] md:min-w-[450px] aspect-video rounded-[2rem] p-[1px] bg-gradient-to-br from-[#C5A059]/60 to-[#581010]/25 shadow-[0_12px_30px_rgba(88,16,16,0.12)] snap-center overflow-hidden"
-                  >
-                    <div className="relative w-full h-full rounded-[calc(2rem-1px)] overflow-hidden bg-[#F3F1EF]">
-                      <img
-                        src={imgSrc}
-                        className="w-full h-full object-cover"
-                        alt={`gallery-${index}`}
-                        loading="lazy"
-                        draggable={false}
-                      />
-
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#2D0A0A]/55 via-transparent to-transparent" />
-
-                      <div className="absolute left-5 bottom-5">
-                        <p className="text-white/70 text-[8px] uppercase tracking-[0.35em] font-sans font-bold">
-                          Memory
-                        </p>
-                        <h4 className="text-white text-lg italic leading-none mt-1">
-                          Class 32
-                        </h4>
+                <AnimatePresence>
+                  {filteredGallery.map((img, index) => (
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      transition={{ duration: 0.35, ease: "easeOut" }}
+                      key={img.src + index}
+                      className="group relative min-w-[82vw] sm:min-w-[360px] md:min-w-[450px] aspect-video rounded-[2rem] p-[1px] bg-gradient-to-br from-[#C5A059]/60 to-[#581010]/25 shadow-[0_12px_30px_rgba(88,16,16,0.12)] snap-center overflow-hidden"
+                    >
+                      <div className="relative w-full h-full rounded-[calc(2rem-1px)] overflow-hidden bg-[#F3F1EF]">
+                        <img
+                          src={img.src}
+                          className="w-full h-full object-cover"
+                          alt={`gallery-${index}`}
+                          loading="lazy"
+                          draggable={false}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#2D0A0A]/60 via-transparent to-transparent" />
+                        <div className="absolute left-5 bottom-5">
+                          <p className="text-[#C5A059] text-[9px] uppercase tracking-[0.2em] font-sans font-black bg-white/90 px-3 py-1 rounded-full inline-block mb-2 shadow-sm">
+                            {img.category}
+                          </p>
+                          <h4 className="text-white text-lg italic leading-none mt-1">
+                            Class 32
+                          </h4>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                ))}
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+                
+                {filteredGallery.length === 0 && (
+                   <div className="w-full text-center py-10 text-gray-400 italic">
+                      Tidak ada foto di kategori ini.
+                   </div>
+                )}
               </motion.div>
             ) : (
               <motion.div
@@ -785,33 +1009,38 @@ export default function ReimaginedGraduation() {
                 transition={{ duration: 0.25 }}
                 className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 sm:gap-6 w-full"
               >
-                {galleryImages.map((imgSrc, index) => (
-                  <div
-                    key={index}
-                    className="group relative aspect-square rounded-[2rem] p-[1px] bg-gradient-to-br from-[#C5A059]/60 to-[#581010]/25 shadow-[0_12px_30px_rgba(88,16,16,0.12)] overflow-hidden w-full"
-                  >
-                    <div className="relative w-full h-full rounded-[calc(2rem-1px)] overflow-hidden bg-[#F3F1EF]">
-                      <img
-                        src={imgSrc}
-                        className="w-full h-full object-cover"
-                        alt={`gallery-${index}`}
-                        loading="lazy"
-                        draggable={false}
-                      />
-
-                      <div className="absolute inset-0 bg-gradient-to-t from-[#2D0A0A]/55 via-transparent to-transparent" />
-
-                      <div className="absolute left-5 bottom-5">
-                        <p className="text-white/70 text-[8px] uppercase tracking-[0.35em] font-sans font-bold">
-                          Memory
-                        </p>
-                        <h4 className="text-white text-lg italic leading-none mt-1">
-                          Class 32
-                        </h4>
+                <AnimatePresence>
+                  {filteredGallery.map((img, index) => (
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.8 }}
+                      transition={{ duration: 0.35, ease: "easeOut" }}
+                      key={img.src + index}
+                      className="group relative aspect-square rounded-[2rem] p-[1px] bg-gradient-to-br from-[#C5A059]/60 to-[#581010]/25 shadow-[0_12px_30px_rgba(88,16,16,0.12)] overflow-hidden w-full"
+                    >
+                      <div className="relative w-full h-full rounded-[calc(2rem-1px)] overflow-hidden bg-[#F3F1EF]">
+                        <img
+                          src={img.src}
+                          className="w-full h-full object-cover"
+                          alt={`gallery-${index}`}
+                          loading="lazy"
+                          draggable={false}
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#2D0A0A]/60 via-transparent to-transparent" />
+                        <div className="absolute left-5 bottom-5">
+                          <p className="text-[#C5A059] text-[9px] uppercase tracking-[0.2em] font-sans font-black bg-white/90 px-3 py-1 rounded-full inline-block mb-2 shadow-sm">
+                            {img.category}
+                          </p>
+                          <h4 className="text-white text-lg italic leading-none mt-1">
+                            Class 32
+                          </h4>
+                        </div>
                       </div>
-                    </div>
-                  </div>
-                ))}
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
               </motion.div>
             )}
           </AnimatePresence>
