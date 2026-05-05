@@ -7,6 +7,7 @@ import {
   useTransform,
   useSpring,
   AnimatePresence,
+  Variants, // <-- Ditambahkan di sini
 } from "framer-motion";
 import Link from "next/link";
 import {
@@ -147,7 +148,8 @@ export default function ReimaginedGraduation() {
   const quoteText = "Bukan sekadar tentang selembar ijazah. Ini adalah bukti perjuangan, tawa, dan air mata yang kita ukir bersama di SMK Telkom Malang. Terbanglah tinggi, karena dunia menanti karya nyata kita.";
   const quoteWords = quoteText.split(" ");
   
-  const quoteVariants = {
+  // <-- DIBERIKAN TIPE VARIANTS AGAR TYPESCRIPT TIDAK ERROR
+  const quoteVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -155,7 +157,8 @@ export default function ReimaginedGraduation() {
     }
   };
 
-  const wordVariants = {
+  // <-- DIBERIKAN TIPE VARIANTS AGAR TYPESCRIPT TIDAK ERROR
+  const wordVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
   };
