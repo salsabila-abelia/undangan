@@ -2,17 +2,17 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import Link from "next/link";
 import { QrCode, ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function KonfirmasiKehadiran() {
   // Nama otomatis yang menempel pada tiket tamu
   const studentName = "Salsabila Abelia Yocelyn";
   const studentClass = "Kelas XII - Angkatan 32";
+  const router = useRouter();
 
   return (
     <main className="min-h-screen bg-[#2D0A0A] font-serif text-white flex items-center justify-center p-4 relative overflow-hidden">
-      
       {/* Background Ornamen yang elegan */}
       <div className="absolute inset-0 pointer-events-none opacity-20 bg-[radial-gradient(circle_at_top,#7A1A1A_0%,transparent_35%),radial-gradient(circle_at_bottom,#C5A059_0%,transparent_25%)]" />
 
@@ -27,9 +27,10 @@ export default function KonfirmasiKehadiran() {
         <h1 className="text-2xl sm:text-3xl font-bold uppercase tracking-widest mb-2 text-[#C5A059]">
           Tiket Akses Masuk
         </h1>
-        
+
         <p className="text-sm font-light opacity-80 mb-8 max-w-xs mx-auto">
-          Simpan dan tunjukkan kode QR ini pada panitia saat registrasi di lokasi acara.
+          Simpan dan tunjukkan kode QR ini pada panitia saat registrasi di
+          lokasi acara.
         </p>
 
         {/* Kotak Nama Siswa Otomatis */}
@@ -40,34 +41,30 @@ export default function KonfirmasiKehadiran() {
           <h3 className="text-xl sm:text-2xl font-bold text-white tracking-wide">
             {studentName}
           </h3>
-          <p className="text-sm text-[#C5A059] mt-1 italic">
-            {studentClass}
-          </p>
+          <p className="text-sm text-[#C5A059] mt-1 italic">{studentClass}</p>
         </div>
 
         {/* Kotak QR Code */}
         <div className="bg-gradient-to-br from-[#C5A059]/30 to-white/10 p-1 rounded-3xl shadow-[0_16px_40px_rgba(197,160,89,0.15)] mb-8">
           <div className="bg-white p-5 rounded-[calc(1.5rem-4px)] flex items-center justify-center relative">
             <QrCode className="absolute text-[#2D0A0A]/5 w-3/4 h-3/4" />
-            <img 
-              src="/qr-code.png" 
-              alt="QR Code Akses" 
+            <img
+              src="/qr-code.png"
+              alt="QR Code Akses"
               className="w-48 h-48 sm:w-56 sm:h-56 object-cover rounded-xl relative z-10"
             />
           </div>
         </div>
 
-        {/* Tombol Kembali */}
-        <Link href="/">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-6 py-3 bg-transparent border border-[#C5A059] text-[#C5A059] rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-2 hover:bg-[#C5A059] hover:text-[#2D0A0A]"
-          >
-            <ArrowLeft size={14} />
-            Kembali ke Undangan
-          </motion.button>
-        </Link>
+        <motion.button
+          onClick={() => window.close()}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="px-6 py-3 bg-transparent border border-[#C5A059] text-[#C5A059] rounded-full text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center gap-2 hover:bg-[#C5A059] hover:text-[#2D0A0A]"
+        >
+          <ArrowLeft size={14} />
+          Kembali ke Undangan
+        </motion.button>
       </motion.div>
     </main>
   );

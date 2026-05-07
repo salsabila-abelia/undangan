@@ -724,7 +724,7 @@ export default function ReimaginedGraduation() {
               ))}
             </div>
 
-            {/* DITAMBAHKAN target="_blank" DI SINI BIAR LAGU GAK MATI */}
+            {/* DITAMBAHKAN target="_blank" DI SINI AJA */}
             <Link href="/konfirmasi" target="_blank" rel="noopener noreferrer">
               <motion.button
                 whileHover={{ scale: 1.05, y: -2 }}
