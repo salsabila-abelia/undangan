@@ -486,15 +486,15 @@ export default function ReimaginedGraduation() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.5 }}
-            className="relative w-full aspect-[3/4] max-w-[280px] sm:max-w-sm lg:max-w-md bg-[#1a0505] border-4 border-[#C5A059] p-3 sm:p-4 shadow-[0_0_50px_rgba(197,160,89,0.25)] rounded-sm"
+            className="relative w-full aspect-[3/4] max-w-[280px] sm:max-w-sm lg:max-w-md bg-[#1a0505] border-4 border-[#C5A059] shadow-[0_0_50px_rgba(197,160,89,0.25)] rounded-sm"
           >
-            <div className="relative w-full h-full border border-[#C5A059]/40 rounded-sm overflow-hidden bg-[#2D0A0A]">
+            <div className="absolute inset-3 sm:inset-4 border border-[#C5A059]/40 rounded-sm overflow-hidden bg-[#2D0A0A]">
               <img
                 src="/images/hero.png"
-                className="w-full h-full object-cover"
+                className="absolute inset-0 w-full h-full object-cover"
                 alt="hero"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#2D0A0A]/80 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#2D0A0A]/80 via-transparent to-transparent pointer-events-none" />
             </div>
           </motion.div>
         </div>
