@@ -347,7 +347,7 @@ export default function ReimaginedGraduation() {
                     className="text-5xl sm:text-7xl text-[#C5A059] font-serif italic tracking-widest text-center" 
                     style={{ textShadow: "0 0 30px rgba(197, 160, 89, 0.4)" }}
                   >
-                    Class 32
+                    Angkatan 32
                   </h1>
                   <motion.div
                     initial={{ width: 0 }}
