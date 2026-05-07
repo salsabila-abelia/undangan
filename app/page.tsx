@@ -7,7 +7,7 @@ import {
   useTransform,
   useSpring,
   AnimatePresence,
-  Variants, // <-- Ditambahkan di sini
+  Variants,
 } from "framer-motion";
 import Link from "next/link";
 import {
@@ -104,7 +104,6 @@ export default function ReimaginedGraduation() {
   const [activeFilter, setActiveFilter] = useState("Semua");
   const filterCategories = ["Semua", "Momen Moklet", "Prakerin", "Project TKJ"];
 
-  // DAFTAR FOTO DIUBAH JADI OBJECT DENGAN KATEGORI
   const galleryImages = [
     { src: "/images/foto1.jpg", category: "Momen Moklet" },
     { src: "/images/foto2.jpg", category: "Project TKJ" },
@@ -148,7 +147,6 @@ export default function ReimaginedGraduation() {
   const quoteText = "Bukan sekadar tentang selembar ijazah. Ini adalah bukti perjuangan, tawa, dan air mata yang kita ukir bersama di SMK Telkom Malang. Terbanglah tinggi, karena dunia menanti karya nyata kita.";
   const quoteWords = quoteText.split(" ");
   
-  // <-- DIBERIKAN TIPE VARIANTS AGAR TYPESCRIPT TIDAK ERROR
   const quoteVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
@@ -157,13 +155,18 @@ export default function ReimaginedGraduation() {
     }
   };
 
-  // <-- DIBERIKAN TIPE VARIANTS AGAR TYPESCRIPT TIDAK ERROR
   const wordVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
   };
 
   useEffect(() => {
+    // CEK SESSION STORAGE: Jika sebelumnya sudah buka amplop, langsung skip ke halaman utama
+    if (typeof window !== "undefined" && sessionStorage.getItem("introPlayed") === "true") {
+      setIntroState("done");
+      setIsFlapOpen(true);
+    }
+    
     setIsMounted(true);
 
     const params = new URLSearchParams(window.location.search);
@@ -199,6 +202,11 @@ export default function ReimaginedGraduation() {
   const handleOpenEnvelope = () => {
     if (isFlapOpen) return;
     setIsFlapOpen(true);
+
+    // SIMPAN STATE: Kasih tau browser kalau amplop udah pernah dibuka
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem("introPlayed", "true");
+    }
 
     if (audioRef.current) {
       audioRef.current.play().then(() => {
@@ -716,7 +724,8 @@ export default function ReimaginedGraduation() {
               ))}
             </div>
 
-            <Link href="/konfirmasi">
+            {/* DITAMBAHKAN target="_blank" DI SINI BIAR LAGU GAK MATI */}
+            <Link href="/konfirmasi" target="_blank" rel="noopener noreferrer">
               <motion.button
                 whileHover={{ scale: 1.05, y: -2 }}
                 whileTap={{ scale: 0.96 }}
