@@ -92,11 +92,13 @@ export default function ReimaginedGraduation() {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isMounted, setIsMounted] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  
+
   // STATE ALUR ANIMASI (Amplop -> Cinematic -> Web)
-  const [introState, setIntroState] = useState<"envelope" | "cinematic" | "done">("envelope");
+  const [introState, setIntroState] = useState<
+    "envelope" | "cinematic" | "done"
+  >("envelope");
   const [isFlapOpen, setIsFlapOpen] = useState(false);
-  
+
   const [showConfetti, setShowConfetti] = useState(false);
   const [showAll, setShowAll] = useState(false);
 
@@ -116,9 +118,10 @@ export default function ReimaginedGraduation() {
     { src: "/images/foto9.jpg", category: "Prakerin" },
   ];
 
-  const filteredGallery = activeFilter === "Semua" 
-    ? galleryImages 
-    : galleryImages.filter(img => img.category === activeFilter);
+  const filteredGallery =
+    activeFilter === "Semua"
+      ? galleryImages
+      : galleryImages.filter((img) => img.category === activeFilter);
 
   const [guestName, setGuestName] = useState("Bapak/Ibu/Saudara/i");
 
@@ -144,29 +147,37 @@ export default function ReimaginedGraduation() {
     },
   ]);
 
-  const quoteText = "Bukan sekadar tentang selembar ijazah. Ini adalah bukti perjuangan, tawa, dan air mata yang kita ukir bersama di SMK Telkom Malang. Terbanglah tinggi, karena dunia menanti karya nyata kita.";
+  const quoteText =
+    "Bukan sekadar tentang selembar ijazah. Ini adalah bukti perjuangan, tawa, dan air mata yang kita ukir bersama di SMK Telkom Malang. Terbanglah tinggi, karena dunia menanti karya nyata kita.";
   const quoteWords = quoteText.split(" ");
-  
+
   const quoteVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
-      transition: { staggerChildren: 0.08 }
-    }
+      transition: { staggerChildren: 0.08 },
+    },
   };
 
   const wordVariants: Variants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.8, ease: "easeOut" },
+    },
   };
 
   useEffect(() => {
     // CEK SESSION STORAGE: Jika sebelumnya sudah buka amplop, langsung skip ke halaman utama
-    if (typeof window !== "undefined" && sessionStorage.getItem("introPlayed") === "true") {
+    if (
+      typeof window !== "undefined" &&
+      sessionStorage.getItem("introPlayed") === "true"
+    ) {
       setIntroState("done");
       setIsFlapOpen(true);
     }
-    
+
     setIsMounted(true);
 
     const params = new URLSearchParams(window.location.search);
@@ -188,7 +199,7 @@ export default function ReimaginedGraduation() {
         setTimeLeft({
           hari: Math.floor(distance / (1000 * 60 * 60 * 24)),
           jam: Math.floor(
-            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
           ),
           menit: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
           detik: Math.floor((distance % (1000 * 60)) / 1000),
@@ -209,9 +220,12 @@ export default function ReimaginedGraduation() {
     }
 
     if (audioRef.current) {
-      audioRef.current.play().then(() => {
-        setIsPlaying(true);
-      }).catch((error) => console.log("Audio play error:", error));
+      audioRef.current
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+        })
+        .catch((error) => console.log("Audio play error:", error));
     }
 
     setTimeout(() => {
@@ -219,7 +233,7 @@ export default function ReimaginedGraduation() {
       setTimeout(() => {
         setIntroState("done");
       }, 2800);
-    }, 1200); 
+    }, 1200);
   };
 
   const { scrollYProgress } = useScroll({
@@ -238,7 +252,7 @@ export default function ReimaginedGraduation() {
 
     window.open(
       `https://www.google.com/calendar/render?action=TEMPLATE&text=${event.text}&dates=${event.dates}&location=${event.location}`,
-      "_blank"
+      "_blank",
     );
   };
 
@@ -277,11 +291,13 @@ export default function ReimaginedGraduation() {
             transition={{ duration: 1.2, ease: [0.76, 0, 0.24, 1] }}
             className="fixed inset-0 z-[9999] bg-[#1a0505] flex flex-col items-center justify-center overflow-hidden"
           >
+            {/* Background Ornamen Kiri Atas */}
             <motion.img
               src="/flower.png"
               className="absolute -top-20 -left-20 w-72 sm:w-[400px] opacity-15 -rotate-45 mix-blend-screen pointer-events-none"
               alt=""
             />
+            {/* Background Ornamen Kanan Bawah */}
             <motion.img
               src="/flower.png"
               className="absolute -bottom-20 -right-20 w-72 sm:w-[400px] opacity-15 rotate-[135deg] mix-blend-screen pointer-events-none"
@@ -297,15 +313,31 @@ export default function ReimaginedGraduation() {
                   className="relative flex flex-col items-center justify-center cursor-pointer z-10"
                   onClick={handleOpenEnvelope}
                 >
-                  <div className="text-[#C5A059] font-serif italic mb-8 text-2xl sm:text-3xl tracking-widest text-center opacity-90 drop-shadow-lg">
+                  <div className="text-[#C5A059] font-serif italic mb-10 text-2xl sm:text-3xl tracking-widest text-center opacity-90 drop-shadow-lg">
                     You're Invited
                   </div>
 
+                  {/* KONTEN AMPLOP */}
                   <div className="relative w-[300px] h-[200px] sm:w-[400px] sm:h-[260px] drop-shadow-2xl transition-transform duration-300 hover:scale-105">
+                    {/* --- HIASAN BUNGA 1 (KIRI BAWAH) --- */}
+                    <img
+                      src="/bunga2.png"
+                      alt="Bunga Kiri Bawah"
+                      className="absolute -bottom-8 -left-8 sm:-bottom-12 sm:-left-12 w-24 sm:w-32 z-40 pointer-events-none drop-shadow-lg object-contain"
+                    />
+
+                    {/* --- HIASAN BUNGA 2 (KANAN ATAS) --- */}
+                    <img
+                      src="/bunga22.png"
+                      alt="Bunga Kanan Atas"
+                      className="absolute -top-8 -right-8 sm:-top-12 sm:-right-12 w-24 sm:w-32 z-40 pointer-events-none drop-shadow-lg object-contain"
+                    />
+
                     <div className="absolute inset-0 bg-[#E0DDD8] rounded-md shadow-inner" />
                     <div className="absolute bottom-0 w-0 h-0 border-l-[150px] sm:border-l-[200px] border-r-[150px] sm:border-r-[200px] border-b-[120px] sm:border-b-[160px] border-l-transparent border-r-transparent border-b-[#E8E5E1] z-10 drop-shadow-sm" />
                     <div className="absolute top-0 left-0 w-0 h-0 border-y-[100px] sm:border-y-[130px] border-l-[150px] sm:border-l-[200px] border-y-transparent border-l-[#F3F1EF] z-10 drop-shadow-md" />
                     <div className="absolute top-0 right-0 w-0 h-0 border-y-[100px] sm:border-y-[130px] border-r-[150px] sm:border-r-[200px] border-y-transparent border-r-[#F3F1EF] z-10 drop-shadow-md" />
+
                     <motion.div
                       initial={{ rotateX: 0 }}
                       animate={{ rotateX: isFlapOpen ? 180 : 0 }}
@@ -313,19 +345,25 @@ export default function ReimaginedGraduation() {
                       style={{ transformOrigin: "top" }}
                       className="absolute top-0 left-0 w-0 h-0 border-l-[150px] sm:border-l-[200px] border-r-[150px] sm:border-r-[200px] border-t-[120px] sm:border-t-[150px] border-l-transparent border-r-transparent border-t-[#DCD8D3] z-20 drop-shadow-lg"
                     />
+
                     <motion.div
-                      animate={{ opacity: isFlapOpen ? 0 : 1, scale: isFlapOpen ? 0 : 1 }}
+                      animate={{
+                        opacity: isFlapOpen ? 0 : 1,
+                        scale: isFlapOpen ? 0 : 1,
+                      }}
                       transition={{ duration: 0.3 }}
                       className="absolute top-[110px] sm:top-[140px] left-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 sm:w-16 sm:h-16 bg-[#581010] rounded-full z-30 shadow-[0_4px_15px_rgba(0,0,0,0.4)] border-[3px] border-[#430c0c] flex items-center justify-center"
                     >
-                      <span className="text-[#C5A059] font-serif italic font-bold text-lg">32</span>
+                      <span className="text-[#C5A059] font-serif italic font-bold text-lg">
+                        32
+                      </span>
                     </motion.div>
                   </div>
 
                   <motion.p
                     animate={{ opacity: [0.4, 1, 0.4] }}
                     transition={{ repeat: Infinity, duration: 2 }}
-                    className="mt-12 text-[#C5A059] text-xs sm:text-sm uppercase tracking-[0.4em] font-sans font-bold"
+                    className="mt-14 text-[#C5A059] text-xs sm:text-sm uppercase tracking-[0.4em] font-sans font-bold"
                   >
                     Click to Open
                   </motion.p>
@@ -343,16 +381,20 @@ export default function ReimaginedGraduation() {
                   transition={{ duration: 1.5, ease: "easeOut" }}
                   className="absolute flex flex-col items-center z-20"
                 >
-                  <h1 
-                    className="text-5xl sm:text-7xl text-[#C5A059] font-serif italic tracking-widest text-center" 
+                  <h1
+                    className="text-5xl sm:text-7xl text-[#C5A059] font-serif italic tracking-widest text-center"
                     style={{ textShadow: "0 0 30px rgba(197, 160, 89, 0.4)" }}
                   >
-                    Angkatan 32
+                    Luminex 32
                   </h1>
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: "100%" }}
-                    transition={{ duration: 1.5, delay: 0.6, ease: "easeInOut" }}
+                    transition={{
+                      duration: 1.5,
+                      delay: 0.6,
+                      ease: "easeInOut",
+                    }}
                     className="h-[2px] bg-gradient-to-r from-transparent via-[#C5A059] to-transparent mt-5"
                   />
                 </motion.div>
@@ -364,25 +406,34 @@ export default function ReimaginedGraduation() {
 
       <AnimatePresence>
         {showConfetti && (
-           <div className="fixed inset-0 pointer-events-none z-[9990] overflow-hidden">
-              {Array.from({ length: 80 }).map((_, i) => {
-                const isGold = Math.random() > 0.5;
-                const isMaroon = Math.random() > 0.8;
-                const left = Math.random() * 100;
-                const duration = 2 + Math.random() * 3;
-                const delay = Math.random() * 0.4;
-                const bgColor = isMaroon ? 'bg-[#581010]' : isGold ? 'bg-[#C5A059]' : 'bg-[#F3D890]';
-                return (
-                  <motion.div
-                    key={i}
-                    initial={{ y: -50, x: left + "vw", rotate: 0, opacity: 1 }}
-                    animate={{ y: "110vh", x: (left + (Math.random() * 30 - 15)) + "vw", rotate: Math.random() * 720, opacity: 0 }}
-                    transition={{ duration, delay, ease: "easeIn" }}
-                    className={`absolute top-0 w-2 h-4 sm:w-3 sm:h-6 rounded-sm ${bgColor} shadow-lg`}
-                  />
-                );
-              })}
-           </div>
+          <div className="fixed inset-0 pointer-events-none z-[9990] overflow-hidden">
+            {Array.from({ length: 80 }).map((_, i) => {
+              const isGold = Math.random() > 0.5;
+              const isMaroon = Math.random() > 0.8;
+              const left = Math.random() * 100;
+              const duration = 2 + Math.random() * 3;
+              const delay = Math.random() * 0.4;
+              const bgColor = isMaroon
+                ? "bg-[#581010]"
+                : isGold
+                  ? "bg-[#C5A059]"
+                  : "bg-[#F3D890]";
+              return (
+                <motion.div
+                  key={i}
+                  initial={{ y: -50, x: left + "vw", rotate: 0, opacity: 1 }}
+                  animate={{
+                    y: "110vh",
+                    x: left + (Math.random() * 30 - 15) + "vw",
+                    rotate: Math.random() * 720,
+                    opacity: 0,
+                  }}
+                  transition={{ duration, delay, ease: "easeIn" }}
+                  className={`absolute top-0 w-2 h-4 sm:w-3 sm:h-6 rounded-sm ${bgColor} shadow-lg`}
+                />
+              );
+            })}
+          </div>
         )}
       </AnimatePresence>
 
@@ -416,7 +467,7 @@ export default function ReimaginedGraduation() {
             initial={{ opacity: 0, scale: 0.8, rotate: -20 }}
             animate={{ opacity: 0.15, scale: 1, rotate: 0 }}
             transition={{ duration: 2, ease: "easeOut" }}
-            src="/flower.png" 
+            src="/flower.png"
             className="absolute -top-10 -left-10 md:-top-20 md:-left-20 w-72 md:w-[450px] lg:w-[500px] mix-blend-screen"
             alt=""
           />
@@ -506,6 +557,10 @@ export default function ReimaginedGraduation() {
             </h2>
 
             <div className="w-16 h-[2px] bg-[#581010] mx-auto my-6 opacity-30" />
+
+            <h3 className="text-2xl sm:text-3xl font-serif text-[#2D0A0A] mb-6">
+              Salsabila Abelia Yocelyn
+            </h3>
 
             <p className="text-gray-500 italic max-w-xl mx-auto text-sm">
               "Sebuah akhir hanyalah awal dari petualangan yang baru. Kami
@@ -724,7 +779,6 @@ export default function ReimaginedGraduation() {
               ))}
             </div>
 
-            {/* DITAMBAHKAN target="_blank" DI SINI AJA */}
             <Link href="/konfirmasi" target="_blank" rel="noopener noreferrer">
               <motion.button
                 whileHover={{ scale: 1.05, y: -2 }}
@@ -751,18 +805,21 @@ export default function ReimaginedGraduation() {
           </div>
 
           <div className="w-full h-[260px] sm:h-[320px] md:h-[350px] rounded-[1.8rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white relative">
+            {/* GOOGLE MAPS EMBED YANG BENAR UNTUK GRAHA CAKRAWALA UM */}
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3951.3435165415!2d112.61332731086055!3d-7.963402479326162!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e788280f55725f1%3A0x6446e01a88b8359a!2sGraha%20Cakrawala%20UM!5e0!3m2!1sid!2sid!4v1714188000000!5m2!1sid!2sid"
+              src="https://maps.google.com/maps?q=Graha+Cakrawala+UM+Malang&t=&z=15&ie=UTF8&iwloc=&output=embed"
               width="100%"
               height="100%"
               style={{ border: 0 }}
               allowFullScreen
               loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
             />
           </div>
 
           <div className="flex justify-center mt-8">
-            <Link href="https://maps.app.goo.gl/3A3D7" target="_blank">
+            {/* LINK TOMBOL GOOGLE MAPS UNTUK GRAHA CAKRAWALA UM */}
+            <Link href="https://maps.google.com/maps?q=Graha+Cakrawala+UM+Malang" target="_blank">
               <button className="flex items-center gap-2 sm:gap-3 px-5 sm:px-8 py-3 sm:py-4 bg-white border border-gray-200 rounded-full text-[9px] sm:text-[10px] font-bold tracking-widest hover:bg-gray-50 transition-all shadow-sm whitespace-nowrap">
                 <MapPin size={14} className="text-[#581010]" />
                 PETUNJUK GOOGLE MAPS
@@ -859,14 +916,18 @@ export default function ReimaginedGraduation() {
           <motion.div
             variants={{
               hidden: { opacity: 0, scale: 0 },
-              visible: { opacity: 1, scale: 1, transition: { duration: 1, delay: 1.5 } }
+              visible: {
+                opacity: 1,
+                scale: 1,
+                transition: { duration: 1, delay: 1.5 },
+              },
             }}
             className="w-24 h-[1px] bg-[#C5A059]/40 mx-auto mt-10 mb-6"
           />
           <motion.p
             variants={{
               hidden: { opacity: 0 },
-              visible: { opacity: 1, transition: { duration: 1, delay: 2 } }
+              visible: { opacity: 1, transition: { duration: 1, delay: 2 } },
             }}
             className="text-white/40 text-xs sm:text-sm tracking-[0.3em] uppercase font-sans font-bold"
           >
@@ -896,16 +957,17 @@ export default function ReimaginedGraduation() {
               selama menempuh pendidikan di SMK Telkom Malang.
             </p>
 
-            <div className="w-full aspect-video rounded-[2rem] sm:rounded-[3rem] overflow-hidden border-4 sm:border-8 border-white shadow-[0_20px_50px_rgba(88,16,16,0.15)] bg-gray-100">
+            <div className="w-full aspect-video rounded-[2rem] sm:rounded-[3rem] overflow-hidden border-4 sm:border-8 border-white shadow-[0_20px_50px_rgba(88,16,16,0.15)] bg-gray-100 relative">
+              {/* KODE INSTAGRAM EMBED YANG BENAR */}
               <iframe
                 width="100%"
                 height="100%"
-                src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=abcdefghijk"
+                src="https://www.instagram.com/p/DWTyEulEix2/embed/"
                 title="Cinematic Video Angkatan 32"
                 frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allowFullScreen
+                scrolling="no"
+                allow="encrypted-media"
+                className="absolute inset-0 w-full h-full"
               ></iframe>
             </div>
           </motion.div>
@@ -942,7 +1004,7 @@ export default function ReimaginedGraduation() {
         {/* SECTION CHIP FILTER BARU */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-10 w-full flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
           <div className="flex items-center gap-2 pr-4 text-gray-400">
-             <Filter size={18} />
+            <Filter size={18} />
           </div>
           {filterCategories.map((category) => (
             <button
@@ -1005,11 +1067,11 @@ export default function ReimaginedGraduation() {
                     </motion.div>
                   ))}
                 </AnimatePresence>
-                
+
                 {filteredGallery.length === 0 && (
-                   <div className="w-full text-center py-10 text-gray-400 italic">
-                      Tidak ada foto di kategori ini.
-                   </div>
+                  <div className="w-full text-center py-10 text-gray-400 italic">
+                    Tidak ada foto di kategori ini.
+                  </div>
                 )}
               </motion.div>
             ) : (
