@@ -107,15 +107,15 @@ export default function ReimaginedGraduation() {
   const filterCategories = ["Semua", "Momen Moklet", "Prakerin", "Project TKJ"];
 
   const galleryImages = [
-    { src: "/images/foto1.jpg", category: "Momen Moklet" },
-    { src: "/images/foto2.jpg", category: "Project TKJ" },
-    { src: "/images/foto3.jpg", category: "Prakerin" },
-    { src: "/images/foto4.jpg", category: "Momen Moklet" },
-    { src: "/images/foto5.jpg", category: "Project TKJ" },
-    { src: "/images/foto6.jpg", category: "Prakerin" },
-    { src: "/images/foto7.jpg", category: "Momen Moklet" },
-    { src: "/images/foto8.jpg", category: "Project TKJ" },
-    { src: "/images/foto9.jpg", category: "Prakerin" },
+    { src: "/images/hero.jpeg", category: "Momen Moklet" },
+    { src: "/images/hero.jpeg", category: "Momen Moklet" },
+    { src: "/images/hero.jpeg", category: "Momen Moklet" },
+    { src: "/images/hero.jpeg", category: "Momen Moklet" },
+    { src: "/images/hero.jpeg", category: "Momen Moklet" },
+    { src: "/images/hero.jpeg", category: "Momen Moklet" },
+    { src: "/images/hero.jpeg", category: "Momen Moklet" },
+    { src: "/images/hero.jpeg", category: "Momen Moklet" },
+    { src: "/images/hero.jpeg", category: "Momen Moklet" },
   ];
 
   const filteredGallery =
@@ -209,6 +209,29 @@ export default function ReimaginedGraduation() {
 
     return () => clearInterval(interval);
   }, []);
+
+  // --- EFEK BARU: PAUSE/PLAY AUDIO SAAT KELUAR TAB/BROWSER ---
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Jika tab di-minimize atau pindah ke tab lain, lagu dipause
+        if (audioRef.current) {
+          audioRef.current.pause();
+        }
+      } else {
+        // Jika kembali ke tab undangan, lagu dilanjut (hanya jika sblmnya lg play)
+        if (isPlaying && audioRef.current) {
+          audioRef.current.play().catch((err) => console.log(err));
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [isPlaying]);
+  // -------------------------------------------------------------
 
   const handleOpenEnvelope = () => {
     if (isFlapOpen) return;
@@ -486,15 +509,15 @@ export default function ReimaginedGraduation() {
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.5 }}
-            className="relative w-full aspect-[3/4] max-w-[280px] sm:max-w-sm lg:max-w-md bg-[#1a0505] border-4 border-[#C5A059] shadow-[0_0_50px_rgba(197,160,89,0.25)] rounded-sm"
+            className="relative w-full aspect-[3/4] max-w-[280px] sm:max-w-sm lg:max-w-md bg-[#1a0505] border-4 border-[#C5A059] p-3 sm:p-4 shadow-[0_0_50px_rgba(197,160,89,0.25)] rounded-sm"
           >
-            <div className="absolute inset-3 sm:inset-4 border border-[#C5A059]/40 rounded-sm overflow-hidden bg-[#2D0A0A]">
+            <div className="relative w-full h-full border border-[#C5A059]/40 rounded-sm overflow-hidden bg-[#2D0A0A]">
               <img
-                src="/images/hero.png"
-                className="absolute inset-0 w-full h-full object-cover"
+                src="/images/hero.jpeg"
+                className="w-full h-full object-cover"
                 alt="hero"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#2D0A0A]/80 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#2D0A0A]/80 via-transparent to-transparent" />
             </div>
           </motion.div>
         </div>
@@ -522,13 +545,6 @@ export default function ReimaginedGraduation() {
                 ANGKATAN 32
               </span>
             </h1>
-
-            <div className="pt-2 pb-2">
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-serif text-white tracking-wide">
-                Salsabila Abelia Yocelyn
-              </h2>
-              <div className="w-16 h-px bg-[#C5A059] mx-auto lg:mx-0 mt-3 lg:mt-4 opacity-60" />
-            </div>
 
             <p className="text-sm sm:text-base md:text-lg font-light opacity-60 max-w-sm mx-auto lg:mx-0 italic mt-4 leading-relaxed">
               Celebrating the transition of Class 32 from students to future
@@ -559,7 +575,7 @@ export default function ReimaginedGraduation() {
             <div className="w-16 h-[2px] bg-[#581010] mx-auto my-6 opacity-30" />
 
             <h3 className="text-2xl sm:text-3xl font-serif text-[#2D0A0A] mb-6">
-              Salsabila Abelia Yocelyn
+              [ Nama Siswa ]
             </h3>
 
             <p className="text-gray-500 italic max-w-xl mx-auto text-sm">
@@ -804,22 +820,25 @@ export default function ReimaginedGraduation() {
             <h3 className="text-2xl font-bold">Denah Lokasi</h3>
           </div>
 
-          <div className="w-full h-[260px] sm:h-[320px] md:h-[350px] rounded-[1.8rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white relative">
+          <div className="w-full h-[260px] sm:h-[320px] md:h-[400px] rounded-[1.8rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white relative">
             {/* GOOGLE MAPS EMBED YANG BENAR UNTUK GRAHA CAKRAWALA UM */}
             <iframe
-              src="https://maps.google.com/maps?q=Graha+Cakrawala+UM+Malang&t=&z=15&ie=UTF8&iwloc=&output=embed"
+              src="https://maps.google.com/maps?q=Graha%20Cakrawala%20UM,%20Malang&t=&z=15&ie=UTF8&iwloc=&output=embed"
               width="100%"
               height="100%"
               style={{ border: 0 }}
               allowFullScreen
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
-            />
+            ></iframe>
           </div>
 
           <div className="flex justify-center mt-8">
             {/* LINK TOMBOL GOOGLE MAPS UNTUK GRAHA CAKRAWALA UM */}
-            <Link href="https://maps.google.com/maps?q=Graha+Cakrawala+UM+Malang" target="_blank">
+            <Link
+              href="https://www.google.com/maps/search/?api=1&query=Graha+Cakrawala+UM,+Malang"
+              target="_blank"
+            >
               <button className="flex items-center gap-2 sm:gap-3 px-5 sm:px-8 py-3 sm:py-4 bg-white border border-gray-200 rounded-full text-[9px] sm:text-[10px] font-bold tracking-widest hover:bg-gray-50 transition-all shadow-sm whitespace-nowrap">
                 <MapPin size={14} className="text-[#581010]" />
                 PETUNJUK GOOGLE MAPS
@@ -957,18 +976,11 @@ export default function ReimaginedGraduation() {
               selama menempuh pendidikan di SMK Telkom Malang.
             </p>
 
-            <div className="w-full aspect-video rounded-[2rem] sm:rounded-[3rem] overflow-hidden border-4 sm:border-8 border-white shadow-[0_20px_50px_rgba(88,16,16,0.15)] bg-gray-100 relative">
-              {/* KODE INSTAGRAM EMBED YANG BENAR */}
-              <iframe
-                width="100%"
-                height="100%"
-                src="https://www.instagram.com/p/DWTyEulEix2/embed/"
-                title="Cinematic Video Angkatan 32"
-                frameBorder="0"
-                scrolling="no"
-                allow="encrypted-media"
-                className="absolute inset-0 w-full h-full"
-              ></iframe>
+            {/* KOTAK PUTIH DENGAN TULISAN "Video" */}
+            <div className="w-full max-w-3xl mx-auto aspect-video rounded-[2rem] sm:rounded-[3rem] overflow-hidden border-4 sm:border-8 border-white shadow-[0_20px_50px_rgba(88,16,16,0.15)] bg-white flex items-center justify-center relative">
+              <span className="text-[#333] font-serif italic text-2xl sm:text-4xl opacity-50">
+                Video
+              </span>
             </div>
           </motion.div>
         </div>
@@ -999,26 +1011,6 @@ export default function ReimaginedGraduation() {
               </>
             )}
           </motion.button>
-        </div>
-
-        {/* SECTION CHIP FILTER BARU */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 mb-10 w-full flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
-          <div className="flex items-center gap-2 pr-4 text-gray-400">
-            <Filter size={18} />
-          </div>
-          {filterCategories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setActiveFilter(category)}
-              className={`px-5 py-2.5 rounded-full text-xs font-bold tracking-wider transition-all whitespace-nowrap border ${
-                activeFilter === category
-                  ? "bg-[#C5A059] text-white border-[#C5A059] shadow-md"
-                  : "bg-white text-gray-500 border-gray-200 hover:border-[#C5A059] hover:text-[#C5A059]"
-              }`}
-            >
-              {category}
-            </button>
-          ))}
         </div>
 
         <div className="relative px-4 sm:px-6 w-full min-h-[300px]">
@@ -1060,7 +1052,7 @@ export default function ReimaginedGraduation() {
                             {img.category}
                           </p>
                           <h4 className="text-white text-lg italic leading-none mt-1">
-                            Class 32
+                            Luminex 32
                           </h4>
                         </div>
                       </div>
@@ -1229,7 +1221,7 @@ export default function ReimaginedGraduation() {
         </div>
 
         <p className="text-[10px] tracking-[0.5em] sm:tracking-[1em] uppercase text-gray-300 font-bold px-4">
-          MOKLET • CLASS 32 • 2026
+          MOKLET • ANGKATAN 32 • 2026
         </p>
       </footer>
     </main>
